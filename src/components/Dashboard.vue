@@ -10,7 +10,11 @@
       >
         <!-- <v-row class="mt-3 pa-2"> -->
 
-        <textarea id="test"></textarea>
+        <p>Type your query in the space / select one from the dropdown below</p>
+        <textarea
+          class="query-space"
+          id="query-space"
+        ></textarea>
 
         <!-- <v-textarea
             v-model="inputQuery"
@@ -23,7 +27,10 @@
 
         <!-- </v-row> -->
         <v-row class="my-3">
-          <v-col cols="9">
+          <v-col
+            cols="9"
+            class="py-0"
+          >
             <v-autocomplete
               v-model="query"
               @change="changeQuery()"
@@ -33,11 +40,15 @@
               return-object
               outlined
               dense
+              hide-details
               label="Queries"
             ></v-autocomplete>
 
           </v-col>
-          <v-col cols="3">
+          <v-col
+            cols="3"
+            class="py-0"
+          >
             <v-btn
               @click="runQuery()"
               :loading="isLoading"
@@ -48,6 +59,8 @@
         </v-row>
 
         <v-divider></v-divider>
+
+        <h2 style="color: '#797979'">Query Builder</h2>
         <v-row>
           <v-col cols="12">
             <v-select
@@ -95,6 +108,7 @@
           <v-btn @click="generateQuery()">GENERATE QUERY</v-btn>
         </v-row>
       </v-col>
+      <v-divider vertical></v-divider>
       <v-col
         cols="7"
         class="pa-3"
@@ -122,7 +136,7 @@
 import orderdetails from "../orderdetails.json";
 export default {
   name: "HelloWorld",
-
+  props: ["isDark"],
   data: () => ({
     editor: null,
     finalQuery: "",
@@ -138,7 +152,7 @@ export default {
     query: "",
     isLoading: false,
     value:
-      'SELECT id, name, surname, standard, address, city, FROM test WHERE name = "John" ORDER BY standard ASC',
+      'SELECT id, name, surname, standard, address, city, FROM query-space WHERE name = "John" ORDER BY standard ASC',
     headers: [
       {
         text: "orderID",
@@ -194,21 +208,33 @@ export default {
       },
     ],
   }),
+  watch: {
+    isDark: function () {
+      if (this.isDark) {
+        this.editor.setOption("theme", "monokai");
+      } else {
+        this.editor.setOption("theme", "");
+      }
+    },
+  },
   created() {},
   mounted() {
     this.tableItems = this.items;
-    this.editor = CodeMirror.fromTextArea(document.getElementById("test"), {
-      lineNumbers: true,
-      tabSize: 2,
-      lineWrapping: true,
-      value: this.inputValue,
-      styleActiveLine: true,
-      styleActiveSelected: true,
-      styleSelectedText: true,
-      mode: "text/x-sql",
-      gutters: ["CodeMirror-lint-markers"],
-      lint: true,
-    });
+    this.editor = CodeMirror.fromTextArea(
+      document.getElementById("query-space"),
+      {
+        lineNumbers: true,
+        tabSize: 2,
+        lineWrapping: true,
+        value: this.inputValue,
+        styleActiveLine: true,
+        styleActiveSelected: true,
+        styleSelectedText: true,
+        mode: "text/x-sql",
+        gutters: ["CodeMirror-lint-markers"],
+        lint: true,
+      }
+    );
 
     this.editor.getDoc().setValue(this.value);
     this.editor.setSize(null, 200);
@@ -265,3 +291,9 @@ export default {
   },
 };
 </script>
+
+<style lang="scss">
+.CodeMirror {
+  border: 1px solid black;
+}
+</style>
