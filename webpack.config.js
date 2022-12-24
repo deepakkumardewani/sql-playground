@@ -3,7 +3,6 @@ const { VueLoaderPlugin } = require("vue-loader");
 const { VuetifyLoaderPlugin } = require("vuetify-loader");
 
 module.exports = (env = {}) => ({
-  stats: "minimal",
   mode: env.prod ? "production" : "development",
   entry: path.resolve(__dirname, "./src/main.js"),
   output: {
@@ -15,17 +14,6 @@ module.exports = (env = {}) => ({
       {
         test: /\.vue$/,
         use: "vue-loader",
-      },
-      {
-        test: /\.(css|sass|scss)$/,
-        use: [
-          {
-            loader: "css-loader",
-          },
-          {
-            loader: "sass-loader",
-          },
-        ],
       },
       {
         test: /\.(png|jpe?g|gif|svg)$/,
@@ -40,20 +28,35 @@ module.exports = (env = {}) => ({
           },
         ],
       },
+
+      {
+        test: /\.(css|sass|scss)$/,
+        use: [
+          {
+            loader: "style-loader",
+          },
+          {
+            loader: "css-loader",
+          },
+          {
+            loader: "sass-loader",
+          },
+        ],
+      },
     ],
   },
   plugins: [new VueLoaderPlugin(), new VuetifyLoaderPlugin()],
-  //   devServer: {
-  //     client: {
-  //       overlay: true,
-  //     },
-  //     liveReload: false,
-  //     static: {
-  //       directory: path.join(__dirname, "public"),
-  //     },
-  //     static: __dirname,
-  //     port: 8081,
-  //   },
+  devServer: {
+    client: {
+      overlay: true,
+    },
+    liveReload: false,
+    static: {
+      directory: path.join(__dirname, "public"),
+    },
+    static: __dirname,
+    port: 8081,
+  },
   performance: {
     hints: false,
     maxEntrypointSize: 512000,
