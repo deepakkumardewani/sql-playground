@@ -1,12 +1,12 @@
-######SQL Playground######
+#SQL Playground
 
 ---
 
-# Project Overview!
+## Project Overview!
 
 This web application is designed to generate **SQL queries** for database management. It provides an intuitive user interface that allows users to easily set up, modify, and run SQL queries on a database. The application provides a range of functionalities such as **filtering**, **sorting**, and grouping results; creating and managing views; and executing stored procedures. It also includes a **query builder** that allows users to quickly create complex SQL queries. With its powerful features, users can efficiently manage their database with minimal effort.
 
-# Javascript Framework
+## Javascript Framework
 
 **Framework of choice**: _VueJS_
 **Reason**: Atlan uses VueJS internally and also because I have previous experience working on it.
