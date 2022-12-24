@@ -43,7 +43,6 @@
               hide-details
               label="Queries"
             ></v-autocomplete>
-
           </v-col>
           <v-col
             cols="3"
@@ -55,7 +54,6 @@
               class="mb-5"
             >Run SQL</v-btn>
           </v-col>
-
         </v-row>
 
         <v-divider></v-divider>
@@ -70,7 +68,6 @@
               label="Show"
               multiple
             ></v-select>
-
           </v-col>
         </v-row>
 
@@ -82,7 +79,6 @@
               :items="columns"
               label="Field"
             ></v-select>
-
           </v-col>
           <v-col cols="6">
             <v-select
@@ -101,7 +97,6 @@
               :items="limit"
               label="Limit"
             ></v-select>
-
           </v-col>
         </v-row>
         <v-row justify="center">
@@ -151,8 +146,7 @@ export default {
     inputQuery: "SELECT * FROM orderdetails LIMIT 5",
     query: "",
     isLoading: false,
-    value:
-      'SELECT id, name, surname, standard, address, city, FROM query-space WHERE name = "John" ORDER BY standard ASC',
+    value: "SELECT * FROM orderdetails LIMIT 5",
     headers: [
       {
         text: "orderID",
@@ -220,6 +214,7 @@ export default {
   created() {},
   mounted() {
     this.tableItems = this.items;
+
     this.editor = CodeMirror.fromTextArea(
       document.getElementById("query-space"),
       {

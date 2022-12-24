@@ -1,12 +1,7 @@
 <template>
   <v-app>
-    <v-app-bar
-      app
-      color="primary"
-      dark
-    >
+    <v-app-bar app color="primary" dark>
       <div class="d-flex align-center">
-
         <h1>SQL playground</h1>
       </div>
 
@@ -18,23 +13,6 @@
         label="Dark mode"
         color="orange"
       ></v-switch>
-
-      <!-- <v-tooltip
-        top
-        open-delay="500"
-      >
-        <template v-slot:activator="{ on, attrs }">
-          <v-btn
-            @click="toggleDark()"
-            icon
-            v-bind="attrs"
-            v-on="on"
-          >
-            <v-icon>{{isDark ? 'fas fa-sun' : 'fas fa-moon'}}</v-icon>
-          </v-btn>
-        </template>
-        <span>{{isDark ? 'toggle light mode' : 'toggle dark mode'}}</span>
-      </v-tooltip> -->
     </v-app-bar>
 
     <v-main>
