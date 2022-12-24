@@ -11,7 +11,15 @@
       </div>
 
       <v-spacer></v-spacer>
-      <v-tooltip
+
+      <v-switch
+        @change="toggleDark()"
+        v-model="isDark"
+        label="Dark mode"
+        color="orange"
+      ></v-switch>
+
+      <!-- <v-tooltip
         top
         open-delay="500"
       >
@@ -26,7 +34,7 @@
           </v-btn>
         </template>
         <span>{{isDark ? 'toggle light mode' : 'toggle dark mode'}}</span>
-      </v-tooltip>
+      </v-tooltip> -->
     </v-app-bar>
 
     <v-main>
@@ -50,12 +58,12 @@ export default {
   }),
   methods: {
     toggleDark() {
+      console.log(this.isDark);
       if (this.isDark) {
-        this.$vuetify.theme.dark = false;
-      } else {
         this.$vuetify.theme.dark = true;
+      } else {
+        this.$vuetify.theme.dark = false;
       }
-      this.isDark = !this.isDark;
     },
   },
 };

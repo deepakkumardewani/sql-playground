@@ -135,7 +135,7 @@
 <script>
 import orderdetails from "../orderdetails.json";
 export default {
-  name: "HelloWorld",
+  name: "Dashboard",
   props: ["isDark"],
   data: () => ({
     editor: null,
@@ -238,11 +238,6 @@ export default {
 
     this.editor.getDoc().setValue(this.value);
     this.editor.setSize(null, 200);
-
-    setTimeout(() => {
-      // this.$vuetify.theme.dark = true;
-      // this.editor.setOption("theme", "monokai");
-    }, 2000);
   },
   methods: {
     runQuery() {
