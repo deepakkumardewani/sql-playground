@@ -4,7 +4,7 @@
 
 ## Project Overview!
 
-This web application is designed to generate **SQL queries** for database management. It provides an intuitive user interface that allows users to easily set up, modify, and run SQL queries on a database. The application provides a range of functionalities such as **filtering**, **sorting**, and grouping results; creating and managing views; and executing stored procedures. It also includes a **query builder** that allows users to quickly create complex SQL queries. With its powerful features, users can efficiently manage their database with minimal effort.
+This web application is designed to provide an intuitive user interface to easily modify and run **SQL queries** on a database. The application provides a range of functionalities such as **filtering** and **sorting**; It also includes a **query builder** that allows users to quickly create complex SQL queries. With its powerful features, users can efficiently manage their database with minimal effort.
 
 ## Javascript Framework
 
