@@ -16,36 +16,19 @@ module.exports = (env = {}) => ({
         use: "vue-loader",
       },
       {
-        test: /\.(png|jpe?g|gif|svg)$/,
+        test: /\.s[ac]ss$/i,
         use: [
-          {
-            loader: "file-loader",
-            options: {
-              name: "[name].[contenthash].[ext]",
-              outputPath: "static/img",
-              esModule: false, // <- here
-            },
-          },
-        ],
-      },
-
-      {
-        test: /\.(css|sass|scss)$/,
-        use: [
-          {
-            loader: "style-loader",
-          },
-          {
-            loader: "css-loader",
-          },
-          {
-            loader: "sass-loader",
-          },
+          // Creates `style` nodes from JS strings
+          "style-loader",
+          // Translates CSS into CommonJS
+          "css-loader",
+          // Compiles Sass to CSS
+          "sass-loader",
         ],
       },
     ],
   },
-  plugins: [new VueLoaderPlugin(), new VuetifyLoaderPlugin()],
+  plugins: [new VueLoaderPlugin()],
   devServer: {
     client: {
       overlay: true,
