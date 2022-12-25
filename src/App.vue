@@ -1,20 +1,21 @@
 <template>
   <v-app>
-    <v-app-bar app color="primary" dark>
+    <v-app-bar
+      app
+      color="primary"
+      dark
+    >
       <div class="d-flex align-center">
         <h1>SQL playground</h1>
       </div>
-
       <v-spacer></v-spacer>
-
       <v-switch
-        @change="toggleDark()"
+        @change="toggleDarkMode()"
         v-model="isDark"
         label="Dark mode"
         color="orange"
       ></v-switch>
     </v-app-bar>
-
     <v-main>
       <Dashboard :isDark="isDark" />
     </v-main>
@@ -35,8 +36,7 @@ export default {
     isDark: false,
   }),
   methods: {
-    toggleDark() {
-      console.log(this.isDark);
+    toggleDarkMode() {
       if (this.isDark) {
         this.$vuetify.theme.dark = true;
       } else {
