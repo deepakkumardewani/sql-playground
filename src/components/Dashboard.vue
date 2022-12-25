@@ -16,15 +16,6 @@
           id="query-space"
         ></textarea>
 
-        <!-- <v-textarea
-            v-model="inputQuery"
-            name="SQL query"
-            filled
-            label="Type your SQL query here OR select one from below dropdown"
-            auto-grow
-            clearable
-          ></v-textarea> -->
-
         <!-- </v-row> -->
         <v-row class="my-3">
           <v-col
@@ -50,7 +41,8 @@
           >
             <v-btn
               @click="runQuery()"
-              :loading="isLoading"
+              :loading="isRunSql"
+              :disabled="isSubmit"
               class="mb-5"
             >Run SQL</v-btn>
           </v-col>
@@ -58,7 +50,43 @@
 
         <v-divider></v-divider>
 
-        <h2 style="color: '#797979'">Query Builder</h2>
+        <h2
+          style="color: '#797979'"
+          class="my-3"
+        >Query Builder</h2>
+        <v-divider></v-divider>
+        <h4 class="my-2">Using natural language</h4>
+
+        <v-row>
+          <v-col cols="9">
+            <v-combobox
+              @change="changeText()"
+              @input="handleInput"
+              :items="naturalSentences"
+              item-text="text"
+              item-value="text"
+              return-object
+              outlined
+              dense
+              hide-details
+              placeholder="Type your natural language here..."
+              label="Text"
+            ></v-combobox>
+          </v-col>
+          <v-col cols="auto">
+            <v-btn
+              @click="submitText()"
+              :loading="isSubmit"
+              :disabled="isRunSql"
+            >
+              Submit
+            </v-btn>
+          </v-col>
+
+        </v-row>
+
+        <h4 class="mt-4">Manual</h4>
+
         <v-row>
           <v-col cols="12">
             <v-select
@@ -66,6 +94,7 @@
               v-model="field"
               :items="columns"
               label="Show"
+              hide-details
               multiple
             ></v-select>
           </v-col>
@@ -78,6 +107,7 @@
               v-model="orderField"
               :items="columns"
               label="Field"
+              hide-details
             ></v-select>
           </v-col>
           <v-col cols="6">
@@ -86,6 +116,7 @@
               v-model="orderName"
               :items="order"
               label="Order"
+              hide-details
             ></v-select>
           </v-col>
         </v-row>
@@ -96,11 +127,29 @@
               v-model="limitField"
               :items="limit"
               label="Limit"
+              hide-details
             ></v-select>
           </v-col>
         </v-row>
         <v-row justify="center">
-          <v-btn @click="generateQuery()">GENERATE QUERY</v-btn>
+          <v-col cols="6">
+
+            <v-btn
+              @click="generateQuery()"
+              :disabled="field === '' && orderField === '' && orderName === ''"
+            >GENERATE QUERY</v-btn>
+          </v-col>
+          <v-spacer></v-spacer>
+          <v-col
+            cols="6"
+            class="text-right"
+          >
+            <v-btn
+              :disabled="field === '' && orderField === '' && orderName === ''"
+              @click="reset()"
+            >RESET</v-btn>
+
+          </v-col>
         </v-row>
       </v-col>
       <v-divider vertical></v-divider>
@@ -108,20 +157,30 @@
         cols="7"
         class="pa-3"
       >
-        <!-- <textarea id="sqlinput"></textarea> -->
 
         <v-skeleton-loader
-          v-if="isLoading"
+          v-if="isRunSql"
           type="table-heading, table-thead, table-tbody, table-tfoot"
         ></v-skeleton-loader>
 
-        <v-data-table
-          v-else
-          :headers="headers"
-          :items="tableItems"
-          :items-per-page="10"
-          class="elevation-1"
-        ></v-data-table>
+        <div v-else>
+          <h1>OrderDetails</h1>
+          <v-text-field
+            v-model="search"
+            class="mb-3"
+            label="Search"
+            single-line
+            hide-details
+          ></v-text-field>
+          <v-data-table
+            :headers="headers"
+            :items="tableItems"
+            :items-per-page="10"
+            :search="search"
+            class="elevation-1"
+          ></v-data-table>
+
+        </div>
       </v-col>
     </v-row>
   </div>
@@ -135,17 +194,18 @@ export default {
   data: () => ({
     editor: null,
     finalQuery: "",
+    search: "",
     field: "",
     columns: ["orderID", "productID", "unitPrice", "quantity", "discount"],
     orderField: "",
     order: ["ASC", "DSC"],
     orderName: "",
+    query: "",
     limit: ["5", "10", "15", "50"],
     limitField: "5",
 
-    inputQuery: "SELECT * FROM orderdetails LIMIT 5",
-    query: "",
-    isLoading: false,
+    isRunSql: false,
+    isSubmit: false,
     value: "SELECT * FROM orderdetails LIMIT 5",
     headers: [
       {
@@ -201,6 +261,30 @@ export default {
         limit: 50,
       },
     ],
+    naturalText: "",
+    hint: "",
+    naturalSentences: [
+      {
+        text: "query to list products with quantity more than 40 and dicount greater than 0",
+        limit: 100,
+      },
+      {
+        text: "query to find products with unit price between 10 and 50",
+        limit: 276,
+      },
+      {
+        text: "query to search products with product id 65 and dicount 0.15",
+        limit: 579,
+      },
+      {
+        text: "query to look for products with quantity > 50",
+        limit: 94,
+      },
+      {
+        text: "query to list out products with quantity between 10 and 50 and unit price < 100",
+        limit: 838,
+      },
+    ],
   }),
   watch: {
     isDark: function () {
@@ -232,20 +316,27 @@ export default {
     );
 
     this.editor.getDoc().setValue(this.value);
-    this.editor.setSize(null, 200);
+    this.editor.setSize(null, 100);
   },
   methods: {
     runQuery() {
-      this.isLoading = true;
+      this.isRunSql = true;
+      let limit;
       setTimeout(() => {
-        const end = this.query.limit ? this.query.limit : 100;
+        if (this.query.limit) {
+          limit = this.query.limit;
+        } else if (this.limitField !== "") {
+          limit = this.limitField;
+        } else {
+          limit = Math.floor(Math.random() * (this.items.length - 1 + 1)) + 1;
+        }
+
+        const end = this.query.limit ? this.query.limit : limit;
         this.tableItems = this.items.slice(0, end);
-        this.isLoading = false;
-      }, 1000);
+        this.isRunSql = false;
+      }, 700);
     },
     changeQuery() {
-      // this.inputQuery = this.query.name;
-
       this.editor.getDoc().setValue(this.query.name);
     },
     selectField() {
@@ -263,20 +354,69 @@ export default {
     generateQuery() {
       //todo: generate query
       const fields = this.field.toString();
-      console.log(
-        "SELECT " + fields + " FROM orderdetails LIMIT " + this.limitField
-      );
+      let query;
       if (fields !== "") {
-        this.inputQuery = `SELECT ${fields} FROM orderdetails LIMIT ${this.limitField}`;
+        query = `SELECT ${fields} FROM orderdetails LIMIT ${this.limitField}`;
       } else {
-        this.inputQuery = `SELECT * FROM orderdetails LIMIT ${this.limitField}`;
+        query = `SELECT * FROM orderdetails LIMIT ${this.limitField}`;
       }
 
       if (this.orderField !== "" && this.orderName !== "") {
-        this.inputQuery = `${this.inputQuery} ORDER BY ${this.orderField} ${this.orderName}`;
+        query = `${query} ORDER BY ${this.orderField} ${this.orderName}`;
       }
 
-      this.editor.getDoc().setValue(this.inputQuery);
+      this.editor.getDoc().setValue(query);
+    },
+    changeText() {},
+    async submitText() {
+      setTimeout(async () => {
+        if (this.naturalText !== "") {
+          this.isSubmit = true;
+          const body = {
+            prompt: `### SQL table, with its properties:
+            # orderdetails(orderId, productId, unitPrice, quantity, discount)
+            ### ${this.naturalText}
+            SELECT`,
+            temperature: 0,
+            max_tokens: 150,
+            top_p: 1,
+            frequency_penalty: 0,
+            presence_penalty: 0,
+            stop: ["#", ";"],
+          };
+          try {
+            const rawResponse = await fetch(
+              "https://api.openai.com/v1/engines/code-davinci-002/completions",
+              {
+                method: "POST",
+                headers: {
+                  Authorization:
+                    "Bearer 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",
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify(body),
+              }
+            );
+            const content = await rawResponse.json();
+            this.editor.getDoc().setValue(`SELECT${content.choices[0].text}`);
+            this.isSubmit = false;
+          } catch (error) {
+            console.error(error);
+          }
+        }
+      }, 100);
+    },
+    handleInput(e) {
+      if (typeof e == "string") {
+        this.naturalText = e;
+      } else {
+        this.naturalText = e.text;
+      }
+    },
+    reset() {
+      this.field = "";
+      this.orderField = "";
+      this.orderName = "";
     },
   },
 };
