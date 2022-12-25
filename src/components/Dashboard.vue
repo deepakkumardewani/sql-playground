@@ -70,7 +70,6 @@
               dense
               hide-details
               placeholder="Type your natural language here..."
-              label="Text"
             ></v-combobox>
           </v-col>
           <v-col cols="auto">
