@@ -389,7 +389,7 @@ export default {
               {
                 method: "POST",
                 headers: {
-                  Authorization: `Bearer ${process.env.secret_key}`,
+                  Authorization: `Bearer ${process.env.VUE_APP_SECRET_KEY}`,
                   "Content-Type": "application/json",
                 },
                 body: JSON.stringify(body),
