@@ -389,8 +389,7 @@ export default {
               {
                 method: "POST",
                 headers: {
-                  Authorization:
-                    "Bearer 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",
+                  Authorization: `Bearer ${process.env.secret_key}`,
                   "Content-Type": "application/json",
                 },
                 body: JSON.stringify(body),
